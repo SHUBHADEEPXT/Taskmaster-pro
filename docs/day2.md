@@ -1,26 +1,34 @@
-#Day2
-============
+# Day 2: Docker Desktop + Kubernetes Setup
 
-**Goals**
-- Confirm Docker Desktop + WSL 2 works.
-- Build multi-stage backend image.
-- Bring up full dev stack (`docker compose up`).
-- Spin up kind cluster, load image, deploy Nginx test.
+## 🎯 Goals Achieved
+- ✅ Docker Desktop + WSL 2 integration working
+- ✅ Multi-container stack with docker-compose
+- ✅ Kind cluster created and running
+- ✅ Kubernetes deployment tested with Nginx
+- ✅ Port forwarding working
 
-**Key commands**
-```bash
-# Build image
-docker build -t taskmaster-pro-backend:latest ./backend
+## 🐳 Docker Stack
+- **Backend**: FastAPI running on port 8000
+- **Frontend**: Node.js + Express on port 3000
+- **Database**: PostgreSQL on port 5432
+- **Cache**: Redis on port 6379
+- **Monitoring**: Prometheus + Grafana
 
-# Dev stack
-docker compose up -d
+## ☸️ Kubernetes Progress
+- **Cluster**: Kind cluster named "dev"
+- **Test Deploy**: Nginx deployment successful
+- **Networking**: Port forwarding 8080:80 working
+- **Status**: Ready for TaskMaster deployment
 
-# kind cluster
-kind create cluster --name dev
-kind load docker-image taskmaster-pro-backend:latest --name dev
+## 📸 Screenshots
+![Docker Services](screenshots/day2/01_docker_services_running.png)
+![Backend Health](screenshots/day2/02_backend_health_check.png)
+![Frontend Login](screenshots/day2/03_frontend_login_page.png)
+![Kubernetes Cluster](screenshots/day2/04_kubernetes_cluster_setup.png)
+![Nginx Success](screenshots/day2/05_nginx_port_forward.png)
 
-# Quick Nginx check
-kubectl create deploy web --image=nginx:1.27
-kubectl expose deploy web --port 80 --type NodePort
-kubectl port-forward svc/web 8080:80  # → http://localhost:8080
-
+## 🚀 Next Steps (Day 3)
+- Deploy TaskMaster backend to Kubernetes
+- Configure PostgreSQL in Kubernetes
+- Set up proper service networking
+- Implement Helm charts
