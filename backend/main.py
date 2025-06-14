@@ -17,6 +17,10 @@ import uvicorn
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Metrics for monitoring
 REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP requests', ['method', 'endpoint'])
 REQUEST_DURATION = Histogram('http_request_duration_seconds', 'HTTP request duration')
@@ -26,17 +30,28 @@ DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localho
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 JWT_SECRET = os.getenv("JWT_SECRET", "your-super-secret-jwt-key-change-in-production")
 
+logger.info(f"Starting TaskMaster Pro API...")
+logger.info(f"Database URL: {DATABASE_URL}")
+logger.info(f"Redis URL: {REDIS_URL}")
+
 # Database setup
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+try:
+    engine = create_engine(DATABASE_URL)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    Base = declarative_base()
+    logger.info("Database connection established")
+except Exception as e:
+    logger.error(f"Database connection failed: {e}")
+    raise
 
 # Redis setup
 try:
     redis_client = redis.from_url(REDIS_URL)
-except:
+    redis_client.ping()  # Test connection
+    logger.info("Redis connection established")
+except Exception as e:
     redis_client = None
-    logging.warning("Redis not available - caching disabled")
+    logger.warning(f"Redis not available - caching disabled: {e}")
 
 # Models
 class User(Base):
@@ -64,7 +79,12 @@ class Task(Base):
     tags = Column(String, nullable=True)  # JSON string of tags
 
 # Create tables
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created successfully")
+except Exception as e:
+    logger.error(f"Failed to create database tables: {e}")
+    raise
 
 # Pydantic models
 class UserCreate(BaseModel):
@@ -79,7 +99,7 @@ class UserLogin(BaseModel):
 class TaskCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
-    priority: str = Field(default="medium", regex="^(low|medium|high)$")
+    priority: str = Field(default="medium", pattern="^(low|medium|high)$")
     due_date: Optional[datetime] = None
     tags: Optional[List[str]] = []
 
@@ -177,11 +197,38 @@ async def add_metrics_middleware(request, call_next):
 # Health check endpoint
 @app.get("/health")
 async def health_check():
-    return {
+    health_status = {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "services": {
+            "database": "unknown",
+            "redis": "unknown"
+        }
     }
+    
+    # Check database
+    try:
+        from sqlalchemy import text
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        health_status["services"]["database"] = "healthy"
+        db.close()
+    except Exception as e:
+        health_status["services"]["database"] = f"unhealthy: {str(e)}"
+        health_status["status"] = "degraded"
+    
+    # Check Redis
+    if redis_client:
+        try:
+            redis_client.ping()
+            health_status["services"]["redis"] = "healthy"
+        except Exception as e:
+            health_status["services"]["redis"] = f"unhealthy: {str(e)}"
+    else:
+        health_status["services"]["redis"] = "disabled"
+    
+    return health_status
 
 # Metrics endpoint for Prometheus
 @app.get("/metrics")
