@@ -211,7 +211,7 @@ async def health_check():
     try:
         from sqlalchemy import text
         db = SessionLocal()
-        db.execute(text("SELECT 1"))
+        db.execute(text("SELECT 1").bindparams())
         health_status["services"]["database"] = "healthy"
         db.close()
     except Exception as e:
