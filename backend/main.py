@@ -10,7 +10,7 @@ import os
 from datetime import datetime, timedelta
 import redis
 import logging
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, Text
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, Text, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import uvicorn
@@ -209,9 +209,11 @@ async def health_check():
     
     # Check database
     try:
-        from sqlalchemy import text
         db = SessionLocal()
-        db.execute(text("SELECT 1").bindparams())
+        # Using explicit SQLAlchemy 2.0 query execution
+        with db.begin():
+            result = db.execute(text("SELECT 1"))
+            result.scalar()
         health_status["services"]["database"] = "healthy"
         db.close()
     except Exception as e:

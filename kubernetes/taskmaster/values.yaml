@@ -13,21 +13,38 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: kind
 
-env:                       # Add environment variables for SQLite
+env:                       # Environment variables for PostgreSQL and Redis
   - name: DATABASE_URL
-    value: sqlite:///./test.db
+    value: postgresql://postgres:password@taskmaster-postgresql:5432/taskmaster
   - name: REDIS_URL
-    value: redis://localhost
+    value: redis://taskmaster-redis-master.default.svc.cluster.local:6379/0
 
-# Add volume mount for SQLite database
-volumeMounts:
-  - name: sqlite-data
-    mountPath: /data
-    subPath: taskmaster.db
+# Remove SQLite volume mounts as we're using PostgreSQL
+volumeMounts: []
 
-volumes:
-  - name: sqlite-data
-    emptyDir: {}
+volumes: []
+
+# PostgreSQL configuration
+postgresql:
+  enabled: true
+  auth:
+    username: postgres
+    password: password
+    database: taskmaster
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+# Redis configuration
+redis:
+  enabled: true
+  auth:
+    password: ""
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
