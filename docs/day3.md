@@ -29,6 +29,8 @@
 | **Old RS crash** | Left intentionally as demo of rollout history; scaled down |
 
 ## 📸 Screenshots
-![Current Container Status](screenshots/day3/01_current container.png)
-![Helm List and Pod Running](screenshots/day3/02_Helm_list and pod_running..png)
-![Health Check OK](screenshots/day3/03_Health_ok..png) 
+![Helm Chart Structure](screenshots/day3/01_helm_chart_structure.png)
+![Helm Release Status](screenshots/day3/02_helm_release_status.png)
+![Pod Health Check](screenshots/day3/03_pod_health_check.png)
+![Port Forward Test](screenshots/day3/04_port_forward_test.png)
+![Rollout History](screenshots/day3/05_rollout_history.png) 

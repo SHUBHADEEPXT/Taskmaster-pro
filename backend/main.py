@@ -14,16 +14,13 @@ from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import uvicorn
-from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response
+from starlette_exporter import PrometheusMiddleware, handle_metrics
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Metrics for monitoring
-REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP requests', ['method', 'endpoint'])
-REQUEST_DURATION = Histogram('http_request_duration_seconds', 'HTTP request duration')
 
 # Configuration
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost/taskmaster")
@@ -134,6 +131,10 @@ app = FastAPI(
     redoc_url="/api/redoc"
 )
 
+# Add Prometheus middleware
+app.add_middleware(PrometheusMiddleware, app_name="taskmaster-api", prefix="taskmaster_api", group_status_codes=True, group_urls=True)
+app.add_route("/metrics", handle_metrics)
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -210,10 +211,8 @@ async def health_check():
     # Check database
     try:
         db = SessionLocal()
-        # Using explicit SQLAlchemy 2.0 query execution
-        with db.begin():
-            result = db.execute(text("SELECT 1"))
-            result.scalar()
+        # Using direct SQLAlchemy query instead of text()
+        result = db.query(1).scalar()
         health_status["services"]["database"] = "healthy"
         db.close()
     except Exception as e:
@@ -231,11 +230,6 @@ async def health_check():
         health_status["services"]["redis"] = "disabled"
     
     return health_status
-
-# Metrics endpoint for Prometheus
-@app.get("/metrics")
-async def get_metrics():
-    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 # Authentication endpoints
 @app.post("/api/auth/register")

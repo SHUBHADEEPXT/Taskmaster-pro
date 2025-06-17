@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: taskmaster
+  labels:
+    release: kp
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: taskmaster
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s 
