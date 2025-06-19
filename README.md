@@ -1,94 +1,126 @@
-# TaskMaster Pro - Complete DevOps Pipeline
+# TaskMaster Pro - Complete DevOps Pipeline 🚀
 
 ## 🏗️ Project Overview
-TaskMaster Pro is a modern task management application built with a complete DevOps pipeline. Think of it as a smart house where every component works together seamlessly.
+TaskMaster Pro is a modern, production-grade To-Do application built to showcase real-world DevOps skills. This project demonstrates a full DevOps pipeline, infrastructure-as-code, containerization, Kubernetes, monitoring, and more—perfect for your portfolio!
+
+---
 
 ## 🏠 Project Structure
 ```
 taskmaster-pro/
-├── src/                  # Frontend source code (The living spaces)
-│   ├── static/          # Static assets (CSS, JS)
+├── src/                  # Frontend (Node.js, HTML, CSS, JS)
+│   ├── static/          # Static assets (css, js)
 │   └── templates/       # HTML templates
-├── backend/             # Backend API (The electrical and plumbing)
-├── infrastructure/      # Terraform configurations (The land and foundation)
-├── kubernetes/         # Kubernetes manifests (The building management system)
-├── ci-cd/             # CI/CD pipeline (The quality control system)
-├── monitoring/        # Monitoring setup (The security and monitoring systems)
-└── docs/             # Documentation (The house manual)
+├── backend/             # FastAPI backend (Python)
+├── infrastructure/      # Terraform configs (infra-as-code)
+├── kubernetes/          # Helm chart & K8s manifests
+│   └── taskmaster/
+│       ├── charts/      # Helm subcharts (PostgreSQL, Redis)
+│       ├── templates/   # K8s YAML templates
+│       ├── values.yaml  # Helm values
+├── ci-cd/               # CI/CD pipeline configs/scripts
+├── monitoring/          # Prometheus, Grafana setup
+├── docs/                # Daily docs & screenshots
+│   ├── day1.md
+│   ├── day2.md
+│   ├── day3.md
+│   ├── day4.md
+│   └── screenshots/
+└── README.md
 ```
+
+---
+
+## 🚦 Day-by-Day Progress & Documentation
+- 📖 **Daily logs:** See `docs/day1.md`, `docs/day2.md`, `docs/day3.md`, `docs/day4.md` for step-by-step progress, learnings, and DevOps best practices.
+- 🖼️ **Screenshots:** Visual progress in `docs/screenshots/` (cluster setup, health checks, dashboards, etc.).
+
+---
+
+## 🛠️ Tech Stack & Tools
+- **Backend:** FastAPI (Python)
+- **Frontend:** Node.js, HTML, CSS, JS
+- **Database:** PostgreSQL (Helm subchart)
+- **Cache:** Redis (Helm subchart)
+- **Containerization:** Docker, Docker Compose
+- **Orchestration:** Kubernetes (kind), Helm
+- **Infrastructure:** Terraform
+- **Monitoring:** Prometheus, Grafana
+- **CI/CD:** GitHub Actions (coming soon), `ci-cd/` for pipeline scripts
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Docker and Docker Compose
+- Docker & Docker Compose
 - Python 3.8+
 - Node.js 14+
 - Git
-- WSL (Windows Subsystem for Linux)
+- WSL2 (recommended for Windows)
+- kind (Kubernetes in Docker)
+- Helm
 
-### Local Development Setup
-1. Clone the repository:
+### Local Development
+1. **Clone the repo:**
    ```bash
    git clone https://github.com/YOUR_USERNAME/taskmaster-pro.git
    cd taskmaster-pro
    ```
-
-2. Set up the development environment:
+2. **Backend setup:**
    ```bash
-   # Create and activate Python virtual environment
+   cd backend
    python -m venv venv
    source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-   
-   # Install backend dependencies
-   cd backend
    pip install -r requirements.txt
-   
-   # Start the development server
    uvicorn main:app --reload
    ```
-
-3. Run with Docker:
+3. **Frontend setup:**
+   ```bash
+   cd ../src
+   # (If needed: npm install)
+   node server.js
+   ```
+4. **Run with Docker Compose:**
    ```bash
    docker-compose up --build
    ```
 
-## 🛠️ Development Workflow
-1. Create a new branch for features
-2. Make your changes
-3. Run tests
-4. Create a pull request
-5. Code review
-6. Merge to main
+---
 
-## 📚 Documentation
-- [Architecture Overview](docs/architecture.md)
-- [API Documentation](docs/api.md)
-- [Deployment Guide](docs/deployment.md)
+## ☸️ Kubernetes & Helm
+- Helm chart in `kubernetes/taskmaster/` manages backend, PostgreSQL, and Redis.
+- Deploy with:
+  ```bash
+  helm install taskmaster ./kubernetes/taskmaster
+  ```
+- Customize via `values.yaml`.
 
-## 🔄 CI/CD Pipeline
-Our CI/CD pipeline includes:
-- Automated testing
-- Security scanning
-- Docker image building
-- Kubernetes deployment
+---
 
 ## 📊 Monitoring
-- Prometheus for metrics
-- Grafana for visualization
-- ELK stack for logging
+- Prometheus & Grafana manifests in `monitoring/`.
+- See `docs/day4.md` and screenshots for dashboards and setup.
 
-## 🔒 Security
-- Regular security scans
-- Dependency updates
-- Network policies
-- Secret management
+---
+
+## 🔄 CI/CD Pipeline
+- CI/CD scripts/configs will be in `ci-cd/` (coming soon!)
+- Plan: Automated tests, builds, security scans, and K8s deploys via GitHub Actions.
+
+---
 
 ## 🤝 Contributing
-1. Fork the repository
-2. Create your feature branch
+1. Fork the repo
+2. Create a feature branch
 3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+4. Push and open a Pull Request
+
+---
 
 ## 📝 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License. See [LICENSE](LICENSE).
+
+---
+
+> **Follow the journey:** Check daily docs and screenshots in `docs/` for a transparent, real-world DevOps build process!
