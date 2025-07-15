@@ -11,12 +11,7 @@ pipeline {
                 echo 'Jenkinsfile is working!'
             }
         }
-        stage('Backend Lint') {
-            agent {
-                docker {
-                    image 'python:3.11'
-                }
-            }
+	    stage('Backend Lint') {
             steps {
                 dir('backend') {
                     sh 'pip install -r requirements.txt'
