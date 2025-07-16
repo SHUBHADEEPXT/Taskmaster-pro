@@ -10,7 +10,9 @@ import os
 from datetime import datetime, timedelta
 import redis
 import logging
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, Text
+from sqlalchemy import (
+    create_engine, Column, Integer, String, Boolean, DateTime, Text
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import uvicorn
@@ -144,7 +146,7 @@ class TaskResponse(BaseModel):
 
 app = FastAPI(
     title="TaskMaster Pro API",
-    description="A powerful task management API with authentication and monitoring",
+    description="Powerful task management API with authentication & monitoring",
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc"
@@ -190,7 +192,11 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(hours=24)
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, JWT_SECRET, algorithm="HS256")
+    return jwt.encode(
+        to_encode,
+        JWT_SECRET,
+        algorithm="HS256"
+    )
 
 
 def get_current_user(
@@ -198,7 +204,8 @@ def get_current_user(
     db: Session = Depends(get_db)
 ):
     try:
-        payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=["HS256"])
+        payload = jwt.decode(credentials.credentials, 
+        JWT_SECRET, algorithms=["HS256"])
         username: str = payload.get("sub")
         if username is None:
             raise HTTPException(status_code=401, detail="Invalid token")
