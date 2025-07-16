@@ -147,7 +147,7 @@ class TaskResponse(BaseModel):
 app = FastAPI(
     title="TaskMaster Pro API",
     description=(
-        "Powerful task management API with authenticat
+        "Powerful task management API with  authentication & monitoring"
     ),    
     version="1.0.0",
     docs_url="/api/docs",
@@ -468,4 +468,3 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=8000
     )
-    
