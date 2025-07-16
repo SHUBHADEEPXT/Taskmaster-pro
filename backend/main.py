@@ -21,9 +21,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Configuration
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost/taskmaster")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", "postgresql://postgres:password@localhost/taskmaster"
+)
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
-JWT_SECRET = os.getenv("JWT_SECRET", "your-super-secret-jwt-key-change-in-production")
+JWT_SECRET = os.getenv(
+    "JWT_SECRET", "your-super-secret-jwt-key-change-in-production"
+)
 
 logger.info("Starting TaskMaster Pro API...")
 logger.info(f"Database URL: {DATABASE_URL}")
