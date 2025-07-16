@@ -22,11 +22,16 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql://postgres:password@localhost/taskmaster"
+    "DATABASE_URL",
+    "postgresql://postgres:password@localhost/taskmaster"
 )
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
+REDIS_URL = os.getenv(
+    "REDIS_URL",
+    "redis://localhost:6379"
+)
 JWT_SECRET = os.getenv(
-    "JWT_SECRET", "your-super-secret-jwt-key-change-in-production"
+    "JWT_SECRET",
+    "your-super-secret-jwt-key-change-in-production"
 )
 
 logger.info("Starting TaskMaster Pro API...")
@@ -74,7 +79,11 @@ class Task(Base):
     priority = Column(String, default="medium")
     due_date = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
     user_id = Column(Integer, index=True)
     tags = Column(String, nullable=True)  # JSON string of tags
 
@@ -101,7 +110,10 @@ class UserLogin(BaseModel):
 class TaskCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
-    priority: str = Field(default="medium", pattern="^(low|medium|high)$")
+    priority: str = Field(
+        default="medium",
+        pattern="^(low|medium|high)$"
+    )
     due_date: Optional[datetime] = None
     tags: Optional[List[str]] = []
 
@@ -138,7 +150,13 @@ app = FastAPI(
     redoc_url="/api/redoc"
 )
 
-app.add_middleware(PrometheusMiddleware, app_name="taskmaster-api", prefix="taskmaster_api", group_status_codes=True, group_urls=True)
+app.add_middleware(
+    PrometheusMiddleware,
+    app_name="taskmaster-api",
+    prefix="taskmaster_api",
+    group_status_codes=True,
+    group_urls=True
+)
 app.add_route("/metrics", handle_metrics)
 
 app.add_middleware(
@@ -175,7 +193,10 @@ def create_access_token(data: dict):
     return jwt.encode(to_encode, JWT_SECRET, algorithm="HS256")
 
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)):
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
     try:
         payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=["HS256"])
         username: str = payload.get("sub")
@@ -424,4 +445,8 @@ async def get_stats(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000
+    )
