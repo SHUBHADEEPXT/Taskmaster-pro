@@ -24,17 +24,12 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:password@localhost/taskmaster"
+    "DATABASE_URL", "postgresql://postgres:password@localhost/taskmaster"
 )
-REDIS_URL = os.getenv(
-    "REDIS_URL",
-    "redis://localhost:6379"
-)
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 JWT_SECRET = os.getenv(
     "JWT_SECRET",
-    "your-super-secret-jwt-key-change-in-production"
-)
+    "your-super-secret-jwt-key-change-in-production")
 
 logger.info("Starting TaskMaster Pro API...")
 logger.info(f"Database URL: {DATABASE_URL}")
@@ -84,8 +79,7 @@ class Task(Base):
     updated_at = Column(
         DateTime,
         default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
+        onupdate=datetime.utcnow)
     user_id = Column(Integer, index=True)
     tags = Column(String, nullable=True)  # JSON string of tags
 
@@ -112,10 +106,7 @@ class UserLogin(BaseModel):
 class TaskCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
-    priority: str = Field(
-        default="medium",
-        pattern="^(low|medium|high)$"
-    )
+    priority: str = Field(default="medium", pattern="^(low|medium|high)$")
     due_date: Optional[datetime] = None
     tags: Optional[List[str]] = []
 
@@ -147,11 +138,10 @@ class TaskResponse(BaseModel):
 app = FastAPI(
     title="TaskMaster Pro API",
     description=(
-        "Powerful task management API with  authentication & monitoring"
-    ),    
+        "Powerful task management API with  authentication & monitoring"),
     version="1.0.0",
     docs_url="/api/docs",
-    redoc_url="/api/redoc"
+    redoc_url="/api/redoc",
 )
 
 app.add_middleware(
@@ -159,7 +149,7 @@ app.add_middleware(
     app_name="taskmaster-api",
     prefix="taskmaster_api",
     group_status_codes=True,
-    group_urls=True
+    group_urls=True,
 )
 app.add_route("/metrics", handle_metrics)
 
@@ -194,23 +184,18 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(hours=24)
     to_encode.update({"exp": expire})
-    return jwt.encode(
-        to_encode,
-        JWT_SECRET,
-        algorithm="HS256"
-    )
+    return jwt.encode(to_encode, JWT_SECRET, algorithm="HS256")
 
 
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     try:
         payload = jwt.decode(
             credentials.credentials,
             JWT_SECRET,
-            algorithms=["HS256"]
-        )
+            algorithms=["HS256"])
         username: str = payload.get("sub")
         if username is None:
             raise HTTPException(status_code=401, detail="Invalid token")
@@ -229,10 +214,7 @@ async def health_check():
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
         "version": "1.0.0",
-        "services": {
-            "database": "unknown",
-            "redis": "unknown"
-        }
+        "services": {"database": "unknown", "redis": "unknown"},
     }
 
     try:
@@ -257,12 +239,11 @@ async def health_check():
 
 
 @app.post("/api/auth/register")
-async def register(
-    user: UserCreate, 
-    db: Session = Depends(get_db)
-    ):
+async def register(user: UserCreate, db: Session = Depends(get_db)):
     if db.query(User).filter(User.username == user.username).first():
-        raise HTTPException(status_code=400, detail="Username already registered")
+        raise HTTPException(
+            status_code=400,
+            detail="Username already registered")
 
     if db.query(User).filter(User.email == user.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -282,18 +263,19 @@ async def register(
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": {"username": user.username, "email": user.email}
+        "user": {
+            "username": user.username,
+            "email": user.email
+        }
     }
 
 
 @app.post("/api/auth/login")
-async def login(
-    user: UserLogin, 
-    db: Session = Depends(get_db)
-    ):
+async def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == user.username).first()
 
-    if not db_user or not verify_password(user.password, db_user.hashed_password):
+    if not db_user or not verify_password(
+            user.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     access_token = create_access_token(data={"sub": user.username})
@@ -301,7 +283,10 @@ async def login(
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": {"username": user.username, "email": db_user.email}
+        "user": {
+            "username": user.username,
+            "email": db_user.email
+        }
     }
 
 
@@ -311,7 +296,7 @@ async def get_tasks(
     priority: Optional[str] = None,
     search: Optional[str] = None,
     current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     query = db.query(Task).filter(Task.user_id == current_user.id)
 
@@ -337,7 +322,7 @@ async def get_tasks(
             "due_date": task.due_date,
             "created_at": task.created_at,
             "updated_at": task.updated_at,
-            "tags": task.tags.split(",") if task.tags else []
+            "tags": task.tags.split(",") if task.tags else [],
         }
         task_responses.append(TaskResponse(**task_dict))
 
@@ -348,7 +333,7 @@ async def get_tasks(
 async def create_task(
     task: TaskCreate,
     current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     db_task = Task(
         title=task.title,
@@ -356,7 +341,7 @@ async def create_task(
         priority=task.priority,
         due_date=task.due_date,
         user_id=current_user.id,
-        tags=",".join(task.tags) if task.tags else None
+        tags=",".join(task.tags) if task.tags else None,
     )
 
     db.add(db_task)
@@ -375,7 +360,7 @@ async def create_task(
         due_date=db_task.due_date,
         created_at=db_task.created_at,
         updated_at=db_task.updated_at,
-        tags=db_task.tags.split(",") if db_task.tags else []
+        tags=db_task.tags.split(",") if db_task.tags else [],
     )
 
 
@@ -384,12 +369,13 @@ async def update_task(
     task_id: int,
     task_update: TaskUpdate,
     current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    db_task = db.query(Task).filter(
-        Task.id == task_id,
-        Task.user_id == current_user.id
-    ).first()
+    db_task = (
+        db.query(Task)
+        .filter(Task.id == task_id, Task.user_id == current_user.id)
+        .first()
+    )
 
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -413,7 +399,7 @@ async def update_task(
         due_date=db_task.due_date,
         created_at=db_task.created_at,
         updated_at=db_task.updated_at,
-        tags=db_task.tags.split(",") if db_task.tags else []
+        tags=db_task.tags.split(",") if db_task.tags else [],
     )
 
 
@@ -421,12 +407,13 @@ async def update_task(
 async def delete_task(
     task_id: int,
     current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    db_task = db.query(Task).filter(
-        Task.id == task_id,
-        Task.user_id == current_user.id
-    ).first()
+    db_task = (
+        db.query(Task)
+        .filter(Task.id == task_id, Task.user_id == current_user.id)
+        .first()
+    )
 
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -442,29 +429,31 @@ async def get_stats(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    total_tasks = db.query(Task).filter(Task.user_id == current_user.id).count()
-    completed_tasks = db.query(Task).filter(
-        Task.user_id == current_user.id,
-        Task.completed.is_(True)
-    ).count()
+    total_tasks = db.query(Task).filter(
+        Task.user_id == current_user.id).count()
+    completed_tasks = (
+        db.query(Task)
+        .filter(Task.user_id == current_user.id, Task.completed.is_(True))
+        .count()
+    )
 
-    overdue_tasks = db.query(Task).filter(
-        Task.user_id == current_user.id,
-        Task.completed.is_(False),
-        Task.due_date < datetime.utcnow()
-    ).count()
+    overdue_tasks = (
+        db.query(Task)
+        .filter(
+            Task.user_id == current_user.id,
+            Task.completed.is_(False),
+            Task.due_date < datetime.utcnow(),
+        )
+        .count()
+    )
 
     return {
         "total_tasks": total_tasks,
         "completed_tasks": completed_tasks,
         "pending_tasks": total_tasks - completed_tasks,
-        "overdue_tasks": overdue_tasks
+        "overdue_tasks": overdue_tasks,
     }
 
 
 if __name__ == "__main__":
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=8000
-    )
+    uvicorn.run(app, host="0.0.0.0", port=8000)
