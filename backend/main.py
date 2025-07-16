@@ -146,7 +146,9 @@ class TaskResponse(BaseModel):
 
 app = FastAPI(
     title="TaskMaster Pro API",
-    description="Powerful task management API with authentication & monitoring",
+    description=(
+        "Powerful task management API with authenticat
+    ),    
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc"
@@ -204,8 +206,11 @@ def get_current_user(
     db: Session = Depends(get_db)
 ):
     try:
-        payload = jwt.decode(credentials.credentials, 
-        JWT_SECRET, algorithms=["HS256"])
+        payload = jwt.decode(
+            credentials.credentials,
+            JWT_SECRET,
+            algorithms=["HS256"]
+        )
         username: str = payload.get("sub")
         if username is None:
             raise HTTPException(status_code=401, detail="Invalid token")
@@ -252,7 +257,10 @@ async def health_check():
 
 
 @app.post("/api/auth/register")
-async def register(user: UserCreate, db: Session = Depends(get_db)):
+async def register(
+    user: UserCreate, 
+    db: Session = Depends(get_db)
+    ):
     if db.query(User).filter(User.username == user.username).first():
         raise HTTPException(status_code=400, detail="Username already registered")
 
@@ -279,7 +287,10 @@ async def register(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @app.post("/api/auth/login")
-async def login(user: UserLogin, db: Session = Depends(get_db)):
+async def login(
+    user: UserLogin, 
+    db: Session = Depends(get_db)
+    ):
     db_user = db.query(User).filter(User.username == user.username).first()
 
     if not db_user or not verify_password(user.password, db_user.hashed_password):
@@ -457,3 +468,4 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=8000
     )
+    
