@@ -24,5 +24,15 @@ pipeline {
                 }
             }
         }
+        stage('Test') {
+            steps {
+                dir('backend') {
+                    sh '''
+                        . venv/bin/activate
+                        pytest
+                    '''
+                }
+            }
+        }
     }
 }
