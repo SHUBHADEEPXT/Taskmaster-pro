@@ -11,27 +11,28 @@ pipeline {
                 echo 'Jenkinsfile is working!'
             }
         }
-	    stage('Backend Lint') {
-            steps {
-                dir('backend') {
-                    sh '''
-                        python3 -m venv venv
-                        . venv/bin/activate
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
-                        flake8 . --exclude venv
-                    '''
+        stage('Backend Lint') {
+            agent {
+                docker {
+                    image 'python:3.11'
+                    args '-v $PWD:/app -w /app'
                 }
+            }
+            steps {
+                sh 'pip install flake8'
+                sh 'flake8 backend/'
             }
         }
         stage('Test') {
-            steps {
-                dir('backend') {
-                    sh '''
-                        . venv/bin/activate
-                        pytest
-                    '''
+            agent {
+                docker {
+                    image 'python:3.11'
+                    args '-v $PWD:/app -w /app'
                 }
+            }
+            steps {
+                sh 'pip install -r backend/requirements.txt'
+                sh 'pytest backend/'
             }
         }
         stage('Build Docker Image') {
