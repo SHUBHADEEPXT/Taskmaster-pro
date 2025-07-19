@@ -1,5 +1,7 @@
 # TaskMaster Pro - Complete DevOps Pipeline
 
+> **Note:** The main [README.md](./README.md) is the primary source of up-to-date project information. This file provides additional details and legacy documentation. Please refer to the main README for the latest setup and instructions.
+
 ## 🏗️ Project Overview
 TaskMaster Pro is a modern task management application showcasing a complete DevOps pipeline with local Kubernetes deployment, monitoring, and GitOps practices.
 
@@ -7,30 +9,34 @@ TaskMaster Pro is a modern task management application showcasing a complete Dev
 ```
 taskmaster-pro/
 ├── src/                    # Frontend source code
-│   ├── server.js          # Node.js frontend server
-│   ├── templates/         # HTML templates
+│   ├── server.js           # Node.js frontend server
+│   ├── templates/          # HTML templates
 │   │   ├── index.html
 │   │   └── login.html
-│   └── static/           # Static assets
-│       ├── css/          # Stylesheets
+│   └── static/             # Static assets
+│       ├── css/            # Stylesheets
 │       │   ├── css.css
 │       │   └── login.css
-│       └── js/           # JavaScript files
+│       └── js/             # JavaScript files
 │           └── app.js
-├── backend/              # Backend API (Python)
-│   ├── main.py          # Python backend application
-│   ├── requirements.txt # Backend dependencies
-│   └── Dockerfile       # Backend container config
-├── kubernetes/          # Kubernetes manifests (to be created)
-├── ci-cd/              # CI/CD pipeline configs (to be created)
-├── monitoring/         # Prometheus & Grafana setup (to be created)
-├── infrastructure/     # Infrastructure as Code
-│   └── terraform/      # Terraform configurations
-├── docs/              # Documentation
-│   └── day1.md        # Progress tracking
-├── Dockerfile         # Main application container
-├── docker-compose.yml # Local development orchestration
-├── requirements.txt   # Root level dependencies
+├── backend/                # Backend API (Python)
+│   ├── main.py             # Python backend application
+│   ├── requirements.txt    # Backend dependencies
+│   └── Dockerfile          # Backend container config
+├── kubernetes/             # Helm chart & K8s manifests
+│   └── taskmaster/
+│       ├── charts/         # Helm subcharts (PostgreSQL, Redis)
+│       ├── templates/      # K8s YAML templates
+│       └── values.yaml     # Helm values
+├── ci-cd/                  # Jenkins pipeline configs/scripts
+├── monitoring/             # Prometheus & Grafana setup
+├── infrastructure/         # Infrastructure as Code
+│   └── terraform/          # Terraform configurations
+├── docs/                   # Documentation
+│   └── day1.md             # Progress tracking
+├── Dockerfile              # Main application container
+├── docker-compose.yml      # Local development orchestration
+├── requirements.txt        # Root level dependencies
 └── README.md
 ```
 
@@ -122,13 +128,13 @@ taskmaster-pro/
 ### DevOps & Infrastructure
 - **Containerization**: Docker & Docker Compose
 - **Orchestration**: Kubernetes (Kind for local)
-- **CI/CD**: GitHub Actions
+- **CI/CD**: Jenkins (see ci-cd/README.md for details)
 - **Monitoring**: Prometheus + Grafana
 - **GitOps**: ArgoCD (planned)
 - **Database**: PostgreSQL
 - **Caching**: Redis
 
-## 📊 Monitoring & Observability
+## 📈 Monitoring & Observability
 
 ### Local Monitoring Setup
 ```bash
@@ -152,21 +158,14 @@ kubectl port-forward svc/monitoring-grafana 3000:80
 
 ## 🔄 CI/CD Pipeline
 
-The GitHub Actions pipeline includes:
-- **Linting**: Code quality checks
-- **Testing**: Automated unit tests
-- **Security**: Container vulnerability scanning
-- **Build**: Docker image creation
-- **Deploy**: Automated deployment to Kind cluster
+The Jenkins pipeline includes:
+- **Linting:** Code quality checks (flake8)
+- **Testing:** Automated unit tests (pytest)
+- **Build:** Docker image creation
+- **Push:** Docker image to registry
+- **Deploy:** Automated deployment to Kind cluster
 
-### Pipeline Trigger
-```bash
-# Push to main branch triggers full pipeline
-git push origin main
-
-# Pull requests trigger testing only
-git push origin feature/new-feature
-```
+See [ci-cd/README.md](./ci-cd/README.md) for pipeline details, troubleshooting, and Jenkinsfile reference.
 
 ## 🔒 Security Features
 
@@ -176,12 +175,12 @@ git push origin feature/new-feature
 - Resource limits and quotas
 - Network policies (planned)
 
-## 📈 Performance Monitoring
+## 📊 Performance Monitoring
 
 Key metrics tracked:
-- **Application**: Response time, error rate, throughput
-- **Infrastructure**: CPU, memory, disk usage
-- **Kubernetes**: Pod health, resource utilization
+- **Application:** Response time, error rate, throughput
+- **Infrastructure:** CPU, memory, disk usage
+- **Kubernetes:** Pod health, resource utilization
 
 ## 🎯 Project Goals & Learning Outcomes
 
@@ -192,36 +191,10 @@ This project demonstrates:
 - **Security-first approach** in containerization
 - **Cost-effective DevOps** without cloud dependencies
 
-## 🚀 Development Workflow
+## 📝 Documentation
 
-1. **Local Development**:
-   ```bash
-   docker-compose up --build
-   ```
-
-2. **Test Changes**:
-   ```bash
-   # Run tests locally
-   python -m pytest backend/tests/
-   ```
-
-3. **Deploy to Local K8s**:
-   ```bash
-   # Build and deploy
-   docker build -t taskmaster:latest ./backend/
-   kind load docker-image taskmaster:latest --name taskmaster-cluster
-   kubectl rollout restart deployment/taskmaster-app -n taskmaster
-   ```
-
-4. **Monitor**:
-   ```bash
-   # Check application health
-   kubectl get pods -n taskmaster
-   kubectl logs -f deployment/taskmaster-app -n taskmaster
-   ```
-
-## 📚 Documentation
-
+- [Main README](./README.md)
+- [CI/CD Details](./ci-cd/README.md)
 - [Day-by-Day Progress](docs/progress.md)
 - [Architecture Overview](docs/architecture.md)
 - [Local Development Guide](docs/development.md)
@@ -243,35 +216,8 @@ This project demonstrates:
 - ✅ Containerized with Docker
 - ✅ Deployed on local Kubernetes cluster
 - ✅ Monitoring with Prometheus & Grafana
-- ✅ Automated CI/CD pipeline
+- ✅ Automated CI/CD pipeline (Jenkins)
 - ✅ GitOps workflow demonstration
 
 **Portfolio Highlights:**
 - Complete end-to-end DevOps pipeline
-- Cost-effective local development setup
-- Production-ready practices
-- Comprehensive monitoring solution
-
-## 📞 Contact
-
-**Author**: [Your Name]  
-**LinkedIn**: [Your LinkedIn Profile]  
-**Email**: [Your Email]  
-**Portfolio**: [Your Portfolio URL]
-
----
-
-*"Building modern applications with DevOps best practices, one commit at a time."*
-
-## 🏆 Achievements
-
-- ✅ Zero-cost local Kubernetes development
-- ✅ Complete observability stack
-- ✅ Automated testing and deployment
-- ✅ Security-first containerization
-- ✅ Portfolio-ready DevOps project
-
-**Cost**: ₹0 (runs entirely on local machine)  
-**Time to Deploy**: < 5 minutes  
-**Monitoring**: Full observability stack  
-**Scalability**: Kubernetes-native
