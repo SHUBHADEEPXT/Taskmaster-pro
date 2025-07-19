@@ -9,18 +9,18 @@ TaskMaster Pro is a modern, production-grade To-Do application built to showcase
 ```
 taskmaster-pro/
 ├── src/                  # Frontend (Node.js, HTML, CSS, JS)
-│   ├── static/          # Static assets (css, js)
-│   └── templates/       # HTML templates
-├── backend/             # FastAPI backend (Python)
-├── infrastructure/      # Terraform configs (infra-as-code)
-├── kubernetes/          # Helm chart & K8s manifests
+│   ├── static/           # Static assets (css, js)
+│   └── templates/        # HTML templates
+├── backend/              # FastAPI backend (Python)
+├── infrastructure/       # Terraform configs (infra-as-code)
+├── kubernetes/           # Helm chart & K8s manifests
 │   └── taskmaster/
-│       ├── charts/      # Helm subcharts (PostgreSQL, Redis)
-│       ├── templates/   # K8s YAML templates
-│       ├── values.yaml  # Helm values
-├── ci-cd/               # CI/CD pipeline configs/scripts
-├── monitoring/          # Prometheus, Grafana setup
-├── docs/                # Daily docs & screenshots
+│       ├── charts/       # Helm subcharts (PostgreSQL, Redis)
+│       ├── templates/    # K8s YAML templates
+│       └── values.yaml   # Helm values
+├── ci-cd/                # Jenkins pipeline configs/scripts
+├── monitoring/           # Prometheus, Grafana setup
+├── docs/                 # Daily docs & screenshots
 │   ├── day1.md
 │   ├── day2.md
 │   ├── day3.md
@@ -31,7 +31,7 @@ taskmaster-pro/
 
 ---
 
-## 🚦 Day-by-Day Progress & Documentation
+## 🛤️ Day-by-Day Progress & Documentation
 - 📖 **Daily logs:** See `docs/day1.md`, `docs/day2.md`, `docs/day3.md`, `docs/day4.md` for step-by-step progress, learnings, and DevOps best practices.
 - 🖼️ **Screenshots:** Visual progress in `docs/screenshots/` (cluster setup, health checks, dashboards, etc.).
 
@@ -46,7 +46,7 @@ taskmaster-pro/
 - **Orchestration:** Kubernetes (kind), Helm
 - **Infrastructure:** Terraform
 - **Monitoring:** Prometheus, Grafana
-- **CI/CD:** GitHub Actions (coming soon), `ci-cd/` for pipeline scripts
+- **CI/CD:** Jenkins (see `ci-cd/` for pipeline scripts)
 
 ---
 
@@ -88,7 +88,7 @@ taskmaster-pro/
 
 ---
 
-## ☸️ Kubernetes & Helm
+## ⚙️ Kubernetes & Helm
 - Helm chart in `kubernetes/taskmaster/` manages backend, PostgreSQL, and Redis.
 - Deploy with:
   ```bash
@@ -104,9 +104,19 @@ taskmaster-pro/
 
 ---
 
-## 🔄 CI/CD Pipeline
-- CI/CD scripts/configs will be in `ci-cd/` (coming soon!)
-- Plan: Automated tests, builds, security scans, and K8s deploys via GitHub Actions.
+## 🔄 CI/CD Pipeline (Jenkins)
+- Jenkins-based CI/CD pipeline automates linting, testing, Docker build/push, and deployment.
+- Pipeline uses Docker agent for isolation and reproducibility.
+- Key stages:
+  - **Lint:** Runs flake8 for Python code quality.
+  - **Test:** Runs backend tests (pytest).
+  - **Build:** Builds Docker image for backend.
+  - **Push:** Pushes Docker image to registry.
+  - **Deploy:** Deploys to Kubernetes (via Helm or kubectl).
+- **Troubleshooting:**
+  - Docker permission errors: Ensure Jenkins user is in the `docker` group and Docker socket is mounted.
+  - Python environment: Use virtual environments to avoid PEP 668 errors.
+  - See `ci-cd/README.md` for more details and troubleshooting steps.
 
 ---
 
