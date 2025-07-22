@@ -43,3 +43,19 @@ The pipeline uses a Docker agent for isolation and reproducibility. See the [Jen
 - Add a `pipelines/` subfolder for different pipeline scripts (Jenkins, GitHub Actions, etc.).
 - Document environment setup for Jenkins agents and runners.
 - Keep this folder updated as you iterate on your CI/CD process. 
+
+## ✅ Jenkins Pipeline Complete (Checkpoint)
+
+- Jenkins pipeline is fully functional and documented.
+- Screenshots to capture:
+  - Jenkins pipeline (all stages green)
+  - Jenkins job configuration
+  - Docker Hub repository with pushed image
+  - (If set up) Kubernetes dashboard or `kubectl get pods` output
+  - (If set up) Prometheus and Grafana dashboards
+- See [docs/screenshots/](../docs/screenshots/) for details.
+
+### Next Steps
+- Deployment (Kubernetes/Helm)
+- Interview Q&A
+- Ongoing enhancements: GitHub Actions, ArgoCD, advanced monitoring, etc. 

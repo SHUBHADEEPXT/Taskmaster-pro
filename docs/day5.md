@@ -14,8 +14,8 @@
 | Jenkins Setup | ✅ Complete | Running in Docker, plugins installed |
 | GitHub SCM    | ✅ Complete | Pipeline pulls code from repo |
 | Linting       | ✅ Complete | Flake8 for backend, enforced in CI |
-| Testing       | ⬜ Pending  | To be added (pytest) |
-| Docker Build  | ⬜ Pending  | To be added |
+| Testing       | ✅ Pending  | To be added (pytest) |
+| Docker Build  | ✅ Pending  | To be added |
 | Deployment    | ⬜ Pending  | To be added (Helm/K8s) |
 
 ## 🐞 Troubleshooting & Lessons
@@ -34,4 +34,18 @@
 ## 📸 Screenshots
 ![Jenkins Pipeline](screenshots/day5/Pipeline.png)
 ![Jenkins 17th Build Success](screenshots/day5/17th%20build%20Succcess.png)
-![Test Pipeline](screenshots/day5/Test-Pipeline.png) 
+![Test Pipeline](screenshots/day5/Test-Pipeline.png)
+
+<!-- Newly added screenshots for Day 5 -->
+![Successful Final Pipeline](screenshots/day5/Successful%20Final%20Pipeline.png)
+![Final Build Details](screenshots/day5/Final%20Build%20Details.png)
+![DockerHub Image](screenshots/day5/DockerHub%20Image.png)
+
+## Jenkins CI/CD Checkpoint (June 2024)
+
+- Jenkins pipeline is now fully implemented and passing all stages.
+- Screenshots of the pipeline and key steps have been taken for documentation/portfolio.
+- Next focus: deployment (Kubernetes/Helm), then interview Q&A.
+- Ongoing plan: continue enhancing with new tools and features.
+
+--- 
