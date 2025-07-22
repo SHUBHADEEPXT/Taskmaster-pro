@@ -134,3 +134,18 @@ MIT License. See [LICENSE](LICENSE).
 ---
 
 > **Follow the journey:** Check daily docs and screenshots in `docs/` for a transparent, real-world DevOps build process!
+
+## 🚀 Jenkins CI/CD Checkpoint (June 2024)
+
+- Jenkins pipeline for backend is fully implemented and passing all stages (Checkout, Lint, Test, Build, Push).
+- Screenshots of the pipeline and key steps are being collected for documentation and portfolio.
+- See [docs/screenshots/](docs/screenshots/) for a list of required screenshots and their purpose.
+
+### Next Steps
+- **Deployment:** Focus on Kubernetes/Helm deployment and document the process.
+- **Interview Q&A:** Prepare and document interview questions and answers based on the project.
+- **Ongoing Enhancements:** Plan to add GitHub Actions, ArgoCD, advanced monitoring, and more tools throughout the year.
+
+---
+
+> **Checkpoint:** This marks the completion of the Jenkins CI/CD pipeline milestone. All progress up to this point is documented. See `docs/day5.md` and `ci-cd/README.md` for details.
