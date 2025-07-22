@@ -12,24 +12,12 @@ pipeline {
             }
         }
         stage('Backend Lint') {
-            agent {
-                docker {
-                    image 'python:3.11'
-                    args '-v $PWD:/app -w /app'
-                }
-            }
             steps {
                 sh 'pip install flake8'
                 sh 'flake8 backend/'
             }
         }
         stage('Test') {
-            agent {
-                docker {
-                    image 'python:3.11'
-                    args '-v $PWD:/app -w /app'
-                }
-            }
             steps {
                 sh 'pip install -r backend/requirements.txt'
                 sh 'pytest backend/'
