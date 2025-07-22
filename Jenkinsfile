@@ -13,14 +13,21 @@ pipeline {
         }
         stage('Backend Lint') {
             steps {
-                sh 'pip install flake8'
-                sh 'flake8 backend/'
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install flake8
+                    flake8 backend/
+                '''
             }
         }
         stage('Test') {
             steps {
-                sh 'pip install -r backend/requirements.txt'
-                sh 'pytest backend/'
+                sh '''
+                    . venv/bin/activate
+                    pip install -r backend/requirements.txt
+                    pytest backend/
+                '''
             }
         }
         stage('Build Docker Image') {
