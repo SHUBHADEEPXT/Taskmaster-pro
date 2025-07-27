@@ -1,61 +1,61 @@
-# CI/CD Documentation - TaskMaster Pro
+# CI/CD Pipeline - TaskMaster Pro
 
-This folder is dedicated to documenting all aspects of the CI/CD process for the TaskMaster Pro project.
+## Overview
+This folder contains all configuration and documentation for the Jenkins-based CI/CD pipeline powering TaskMaster Pro.
 
-## Jenkins Pipeline Overview
+---
 
-The current CI/CD pipeline is implemented using **Jenkins** and automates the following stages:
+## Pipeline Features
+- **Automated Linting:** Python code checked with flake8
+- **Automated Testing:** Backend tested with pytest
+- **Docker Build & Push:** Backend and frontend images built and pushed to Docker Hub
+- **Kubernetes Deploy:** Helm used to deploy both backend and frontend to the cluster
+- **Quality Gates:** Pipeline fails on lint/test errors
 
-- **Lint:** Runs flake8 for Python code quality.
-- **Test:** Runs backend tests (pytest).
-- **Build:** Builds Docker image for backend.
-- **Push:** Pushes Docker image to container registry.
-- **Deploy:** Deploys to Kubernetes (via Helm or kubectl).
+---
 
-The pipeline uses a Docker agent for isolation and reproducibility. See the [Jenkinsfile](../Jenkinsfile) for the full pipeline script.
+## How It Works
+- **Jenkinsfile** defines the pipeline stages (see root of repo)
+- **Docker agent** ensures clean, reproducible builds
+- **Pipeline triggers:**
+  - On code push (webhook from GitHub)
+  - On Pull Request (if configured)
+  - Manual run from Jenkins UI
+- **Artifacts:** Docker images tagged and pushed to Docker Hub
+- **Deployment:** Helm upgrades backend and frontend in the cluster
 
-## Key Design Decisions
-- **Jenkins** was chosen for its flexibility and local control.
-- **Docker agent** ensures a clean, consistent environment for each stage.
-- **Quality gates**: Linting and testing are required before build/push/deploy.
+---
 
-## Troubleshooting & Common Issues
+## How to Trigger the Pipeline
+- **Manual:** Click "Build Now" in Jenkins UI
+- **Webhook:** Set up a webhook in your GitHub repo to POST to Jenkins on push
+- **PR:** (Optional) Configure Jenkins to build on PR events
 
-- **Docker permission errors:**
-  - Ensure the Jenkins user is in the `docker` group inside the Jenkins container.
-  - Mount the Docker socket (`/var/run/docker.sock`) into the Jenkins container.
-  - Restart Jenkins after changing group membership.
-- **Python environment (PEP 668 error):**
-  - Use a Python virtual environment in the Jenkins pipeline to avoid the externally-managed-environment error.
-- **Slow pipeline:**
-  - Increase Docker Desktop CPU/RAM allocation if running locally.
-- **Jenkins data loss:**
-  - Use a host path volume for Jenkins data persistence.
+---
 
-## Current Status
-- Jenkins-based CI pipeline is set up for backend linting (flake8), testing (pytest), Docker build/push, and deployment.
-- All linting errors have been fixed and the pipeline is green.
-- Docker permission and Python environment issues have been resolved.
-- Next steps: Add frontend tests and SonarQube integration (future).
+## Demo Instructions
+- Show Jenkins UI with pipeline history
+- Trigger a build (manual or via code push)
+- Show each stage (Lint, Test, Build, Push, Deploy)
+- Show successful deployment in Kubernetes (pods running)
+- Reference screenshots in `docs/screenshots/`
 
-## Suggestions for This Folder
-- Add a `troubleshooting.md` for common CI/CD issues (see above for initial content).
-- Add a `pipelines/` subfolder for different pipeline scripts (Jenkins, GitHub Actions, etc.).
-- Document environment setup for Jenkins agents and runners.
-- Keep this folder updated as you iterate on your CI/CD process. 
+---
 
-## ✅ Jenkins Pipeline Complete (Checkpoint)
+## Troubleshooting
+- **Docker permission errors:** Ensure Jenkins user is in the `docker` group and Docker socket is mounted
+- **Python venv/PEP 668 errors:** Use a virtual environment for pip installs
+- **Slow builds:** Allocate more CPU/RAM to Docker Desktop if needed
+- **Image pull errors:** Check Docker Hub credentials and image tags
+- **K8s deploy errors:** Check Helm values and pod logs
 
-- Jenkins pipeline is fully functional and documented.
-- Screenshots to capture:
-  - Jenkins pipeline (all stages green)
-  - Jenkins job configuration
-  - Docker Hub repository with pushed image
-  - (If set up) Kubernetes dashboard or `kubectl get pods` output
-  - (If set up) Prometheus and Grafana dashboards
-- See [docs/screenshots/](../docs/screenshots/) for details.
+---
 
-### Next Steps
-- Deployment (Kubernetes/Helm)
-- Interview Q&A
-- Ongoing enhancements: GitHub Actions, ArgoCD, advanced monitoring, etc. 
+## References
+- [Jenkinsfile](../Jenkinsfile)
+- [README.md](../README.md)
+- [docs/day6.md](../docs/day6.md)
+
+---
+
+> For more details, see daily logs and troubleshooting in `docs/`. 
