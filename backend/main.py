@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import redis
 import logging
 from sqlalchemy import (
-    create_engine, Column, Integer, String, Boolean, DateTime, Text
+    create_engine, Column, Integer, String, Boolean, DateTime, Text, text
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
@@ -145,11 +145,7 @@ app = FastAPI(
 )
 
 app.add_middleware(
-    PrometheusMiddleware,
-    app_name="taskmaster-api",
-    prefix="taskmaster_api",
-    group_status_codes=True,
-    group_urls=True,
+    PrometheusMiddleware
 )
 app.add_route("/metrics", handle_metrics)
 
@@ -219,7 +215,7 @@ async def health_check():
 
     try:
         db = SessionLocal()
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         health_status["services"]["database"] = "healthy"
         db.close()
     except Exception as e:
