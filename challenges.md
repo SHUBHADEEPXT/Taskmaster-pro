@@ -1,42 +1,43 @@
-# Challenges Faced - TaskMaster Pro (Days 4 & 5)
+# Challenges & Troubleshooting Log
 
-## Day 4: Jenkins Setup & Initial CI
-
-- **Jenkins Setup in Docker:**
-  - Jenkins was started in a Docker container, but the default agent lacked Python and pip, causing initial pipeline failures.
-  - Required entering the Jenkins container as root to install Python, pip, and system packages.
-
-- **PEP 668 Error:**
-  - Encountered the "externally-managed-environment" error when trying to use pip inside the Jenkins container.
-  - Solution: Used a Python virtual environment for dependency installation in the Jenkins pipeline.
-
-- **Jenkins Slowness:**
-  - Jenkins UI and builds were slow due to low Docker Desktop resource allocation (CPU/RAM).
-  - Solution: Increased Docker Desktop resources and stopped unused containers.
-
-- **Jenkinsfile & Pipeline Issues:**
-  - Multiple iterations to get the Jenkinsfile working with the right agent, Python, and flake8 setup.
-  - Had to exclude the venv directory from flake8 to avoid performance issues.
-
-## Day 5: Linting, Flake8, and CI Quality Gates
-
-- **Flake8 Linting Errors:**
-  - Many style/code issues (E501, F401, W293, etc.) in backend/main.py caused pipeline failures.
-  - Required multiple rounds of fixing long lines, unused imports, blank lines, and indentation issues.
-  - Some errors appeared in "chunks" as previous fixes revealed new ones.
-
-- **Indentation & Mixed Spaces/Tabs:**
-  - Encountered mixed indentation (tabs vs. spaces) in some return statements, which flake8 flagged.
-
-- **Line Too Long in Arguments/Returns:**
-  - Had to break up long argument lists and dictionary returns to comply with E501.
-  
-- **Final Success:**
-  - After careful, incremental fixes, the backend now passes flake8 with zero errors, and the Jenkins pipeline is green.
+This document tracks major challenges faced and solutions found during the TaskMaster Pro DevOps project.
 
 ---
 
-**Lessons Learned:**
-- CI/CD setup in real-world projects often requires troubleshooting environment and dependency issues.
-- Linting and code quality gates are valuable but can be tedious to enforce on legacy or unformatted code.
-- Incremental, testable changes and clear documentation make troubleshooting much easier. 
+## Day 1: Project Setup & Git
+- **Issue:** Git authentication failed (password removed by GitHub)
+  - **Solution:** Used a Personal Access Token (PAT) for GitHub authentication.
+- **Issue:** Frontend static files (CSS/JS) not loading
+  - **Solution:** Fixed static file paths in HTML for both local and Docker environments.
+
+## Day 2: Docker & Compose
+- **Issue:** Docker Compose network issues
+  - **Solution:** Ensured correct service names and ports in docker-compose.yml.
+
+## Day 3: Kubernetes & Helm Bootstrap
+- **Issue:** Pod CrashLoopBackOff due to missing DB
+  - **Solution:** Switched to SQLite fallback for initial deployment.
+- **Issue:** Helm values not picked up
+  - **Solution:** Used correct env: block in values.yaml.
+
+## Day 4: Database & Monitoring
+- **Issue:** PostgreSQL/Redis not accessible in cluster
+  - **Solution:** Fixed service names and namespaces in values.yaml.
+- **Issue:** Prometheus/Grafana pods stuck in Pending
+  - **Solution:** Waited for image pulls and checked node resources.
+
+## Day 5: CI/CD Pipeline (Jenkins)
+- **Issue:** Jenkins Docker permission errors
+  - **Solution:** Added Jenkins user to docker group and matched group IDs.
+- **Issue:** Python venv/PEP 668 errors
+  - **Solution:** Used virtual environments in Jenkins pipeline.
+
+## Day 6: Frontend Deployment & Full Stack
+- **Issue:** Frontend not accessible after deploy
+  - **Solution:** Set correct container/service ports and used port-forwarding on 3001.
+- **Issue:** Metrics/health checks not working
+  - **Solution:** Fixed SQLAlchemy health check with text() and ensured Prometheus endpoint exposed.
+
+---
+
+> More challenges and solutions can be added as the project evolves. If you faced a unique issue, add it here for future reference! 
